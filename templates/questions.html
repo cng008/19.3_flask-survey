@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Survey{% endblock %}
+
+{% block content %}
+
+    <h2 class="text-center lh-lg">{{q_id}} {{ question.question }}</h2>
+    <form action="/answer" method="POST" class="row g-3">
+        <div class="d-grid gap-2 col-6 mx-auto">
+            {% for choice in question.choices %}
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault1" required>
+                <label class="form-check-label" for="flexRadioDefault1" value="{{ choice }}">{{ choice }}</label>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary col-3 mt-4">Submit</button> 
+        </div>
+    </form>
+
+{% endblock %}
