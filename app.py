@@ -69,6 +69,8 @@ def ans():
 
 @app.route("/thanks")
 def complete():
-    """ Survey complete. Show thanks page """
+    """ show thanks page after no more """
 
-    return render_template("thanks.html")
+    responses = session['responses']
+
+    return render_template("thanks.html", survey=survey, responses=responses)
