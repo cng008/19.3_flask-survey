@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from surveys import satisfaction_survey as survey
 
@@ -7,8 +7,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'shhhh'
 debug = DebugToolbarExtension(app)
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-
-responses = []
 
 
 @app.route('/')
@@ -20,9 +18,9 @@ def index():
 
 @app.route("/begin", methods=["POST"])
 def start_survey():
-    """ go to first question """
+    """ clear session & go to first question """
 
-    responses = []
+    session['responses'] = []
     
     return redirect("/questions/0")
 
@@ -30,6 +28,7 @@ def start_survey():
 @app.route('/questions/<int:q_id>')
 def quest(q_id):
     """ show 1 question per page """
+    responses = session.get('responses')
 
     if responses is None: 
         # trying to access question page too soon
@@ -41,7 +40,7 @@ def quest(q_id):
 
     if len(responses) != q_id :
         # Trying to access questions out of order.
-        flash(f"Error {q_id}: You can't go there yet.")
+        flash(f"Error 400{q_id}: You can't go there.")
         return redirect(f"/questions/{len(responses)}")
 
     question = survey.questions[q_id]
@@ -55,7 +54,10 @@ def ans():
     # get the response choice
     choice = request.form['answer']
 
+    # add response to session
+    responses = session['responses']
     responses.append(choice)
+    session['responses'] = responses
 
     if (len(responses) == len(survey.questions)):
         # They've answered all the questions! Thank them.
