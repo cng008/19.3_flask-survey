@@ -20,6 +20,7 @@ def index():
 def start_survey():
     """ clear session & go to first question """
 
+    # reset session
     session['responses'] = []
     
     return redirect("/questions/0")
@@ -51,7 +52,7 @@ def quest(q_id):
 def ans():
     """ Save response and redirect to next question """
 
-    # get the response choice
+    # search through templates? and get the response choice
     choice = request.form['answer']
 
     # add response to session
@@ -71,6 +72,7 @@ def ans():
 def complete():
     """ show thanks page after no more """
 
+    flash(f"Survey submitted")
     responses = session['responses']
 
     return render_template("thanks.html", survey=survey, responses=responses)
